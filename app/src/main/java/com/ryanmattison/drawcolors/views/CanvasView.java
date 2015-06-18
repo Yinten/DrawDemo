@@ -95,7 +95,6 @@ public class CanvasView extends SurfaceView {
 
     private void touch_start(float x, float y)
     {
-        _path.reset();
         _path.moveTo(x, y);
         mX = x;
         mY = y;
