@@ -14,17 +14,15 @@ import java.io.File;
 public class ShareUtil {
 
     public static void shareImage(
-            Context context, String uri)
+            Context context, Uri uri)
     {
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
         sendIntent.setType("image/jpeg");
         sendIntent.putExtra(Intent.EXTRA_TEXT,
                 "Made with YoloSwagApp");
-        File file = new File(uri);
 
-        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
         context.startActivity(Intent.createChooser(sendIntent, "Share"));
-
     }
-
 }

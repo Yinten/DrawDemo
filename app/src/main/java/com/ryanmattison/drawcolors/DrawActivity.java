@@ -18,6 +18,7 @@ package com.ryanmattison.drawcolors;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -92,7 +93,7 @@ public class DrawActivity extends AppCompatActivity {
             Bitmap bitmap = _canvasView.captureImage();
             if(bitmap != null)
             {
-                String savedBitmapFileLocation = ImageUtil.saveImage(this, bitmap);
+                Uri savedBitmapFileLocation = ImageUtil.cacheBitmapToTempStore(this, bitmap);
                 Log.i(TAG, "Saved Bitmap Location: " + savedBitmapFileLocation);
                 ShareUtil.shareImage(this, savedBitmapFileLocation);
             }
