@@ -29,6 +29,11 @@
         android:title="Erase Toggle"
         support:showAsAction="always" />
 
+    <item android:id="@+id/menu_linesize"
+        android:icon="@drawable/ic_gesture_black_24dp"
+        android:title="Line Size"
+        support:showAsAction="always"  />
+
     <item
         android:id="@+id/menu_undo"
         android:icon="@drawable/ic_undo_black_24dp"

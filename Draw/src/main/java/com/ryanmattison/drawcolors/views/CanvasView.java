@@ -44,6 +44,7 @@ import java.util.List;
 public class CanvasView extends SurfaceView implements IPaint {
     public static final int DEFAULT_COLOR = 0xFF000000;
     private static final String TAG = "CanvasView";
+    private static final int DEFAULT_LINESIZE = 12;
 
     /* The Canvas View will hold its current paint color, pathing, and revision information.
     This will helpful in view reuse if needed for the future of this application. */
@@ -51,7 +52,7 @@ public class CanvasView extends SurfaceView implements IPaint {
     ArrayList<ShapeBO> _shapes = new ArrayList<ShapeBO>();
     ArrayList<ShapeBO> _undoneShapes = new ArrayList<ShapeBO>();
 
-
+    private int _lineSize = DEFAULT_LINESIZE;
     private int _color = DEFAULT_COLOR;
     ShapeBO _shape = new ShapeBO();
     private Paint _paint;
@@ -60,6 +61,7 @@ public class CanvasView extends SurfaceView implements IPaint {
 
     private static final float TOUCH_TOLERANCE = 1;
     private boolean _eraseMode = false;
+    private CharSequence lineSize;
 
 
     public CanvasView(Context context) {
@@ -91,7 +93,7 @@ public class CanvasView extends SurfaceView implements IPaint {
         _paint.setStyle(Paint.Style.STROKE);
         _paint.setStrokeJoin(Paint.Join.ROUND);
         _paint.setStrokeCap(Paint.Cap.ROUND);
-        _paint.setStrokeWidth(12);
+        _paint.setStrokeWidth(_lineSize);
 
     }
 
@@ -102,9 +104,11 @@ public class CanvasView extends SurfaceView implements IPaint {
         Log.i(TAG, "Canvas Draw");
         for (ShapeBO shape : _shapes) {
             _paint.setColor(shape.color);
+            _paint.setStrokeWidth(shape.lineSize);
             canvas.drawPath(shape.path, _paint);
         }
         _paint.setColor(isEraseMode() ? Color.WHITE : _color);
+        _paint.setStrokeWidth(_lineSize);
         canvas.drawPath(_shape.path, _paint);
     }
 
@@ -127,6 +131,7 @@ public class CanvasView extends SurfaceView implements IPaint {
     private void touch_up() {
         _shape.path.lineTo(mX, mY);
         _shape.color = isEraseMode() ? Color.WHITE : _color;
+        _shape.lineSize = _lineSize;
         _shapes.add(_shape);
         _shape = new ShapeBO();
         _undoneShapes.clear();
@@ -204,5 +209,10 @@ public class CanvasView extends SurfaceView implements IPaint {
 
     public List<ShapeBO> getShapes() {
         return _shapes;
+    }
+
+    @Override
+    public void setLineSize(int lineSize) {
+        this._lineSize = lineSize;
     }
 }

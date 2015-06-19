@@ -16,6 +16,8 @@
 
 package com.ryanmattison.drawcolors;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -69,9 +71,8 @@ public class DrawActivity extends AppCompatActivity {
 
                 @Override
                 public void onColorSelected(int color) {
-                   _canvasView.setColor(color);
-                    if(_canvasView.isEraseMode())
-                    {
+                    _canvasView.setColor(color);
+                    if (_canvasView.isEraseMode()) {
                         _canvasView.toggleErase();
                     }
                 }
@@ -85,40 +86,43 @@ public class DrawActivity extends AppCompatActivity {
 
                 item.setIcon(R.drawable.ic_eraser_black_24dp);
 
-            }
-            else
-            {
+            } else {
                 item.setIcon(R.drawable.ic_brush_black_24dp);
             }
 
             _canvasView.toggleErase();
             return true;
-        }
-
-        else if(id == R.id.menu_redo)
-        {
+        } else if (id == R.id.menu_redo) {
             _canvasView.redo();
             return true;
-        }
-        else if (id == R.id.menu_undo)
-        {
+        } else if (id == R.id.menu_undo) {
             _canvasView.undo();
             return true;
-        }
-        else if (id == R.id.menu_share)
-        {
+        } else if (id == R.id.menu_share) {
             Bitmap bitmap = _canvasView.captureImage();
-            if(bitmap != null)
-            {
+            if (bitmap != null) {
                 Uri savedBitmapFileLocation = ImageUtil.cacheBitmapToTempStore(this, bitmap);
                 Log.i(TAG, "Saved Bitmap Location: " + savedBitmapFileLocation);
                 ShareUtil.shareImage(this, savedBitmapFileLocation);
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, "Image issue", Toast.LENGTH_SHORT).show();
             }
             return true;
+        } else if (id == R.id.menu_linesize)
+        {
+            final CharSequence[] items = {
+                    "12", "16", "24"
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Pick a line size");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    _canvasView.setLineSize(Integer.valueOf(items[item].toString()));
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
 
         return super.onOptionsItemSelected(item);

@@ -14,5 +14,6 @@ public interface IPaint {
     public void setColor(int color);
     public int getColor();
     public Bitmap captureImage();
+    public void setLineSize(int lineSize);
 
 }
