@@ -21,15 +21,11 @@ public class ImageUtil {
         Uri U = null;
         try
         {
-
-
-
             File F = new File(context.getExternalCacheDir().getAbsolutePath(),"temp.jpg");
 
             F.setReadable(true, false);
             fos = new FileOutputStream(F);
             b.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-
 
             U = Uri.fromFile(F);
 
