@@ -13,6 +13,7 @@ public class ShapeBO {
         path = new Path();
     }
 
+
     public int color;
     public Path path;
 }

@@ -24,12 +24,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.shapes.Shape;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ryan on 6/17/2015.
@@ -40,7 +42,7 @@ import java.util.ArrayList;
  * First Demo is to free draw with touch.
  */
 public class CanvasView extends SurfaceView implements IPaint {
-    public static final int DEFAULT_COLOR = 0x77FFFFFF;
+    public static final int DEFAULT_COLOR = 0xFF000000;
     private static final String TAG = "CanvasView";
 
     /* The Canvas View will hold its current paint color, pathing, and revision information.
@@ -54,7 +56,7 @@ public class CanvasView extends SurfaceView implements IPaint {
     ShapeBO _shape = new ShapeBO();
     private Paint _paint;
     private float mX, mY;
-
+    private Bitmap mBitmap;
 
     private static final float TOUCH_TOLERANCE = 1;
     private boolean _eraseMode = false;
@@ -93,6 +95,7 @@ public class CanvasView extends SurfaceView implements IPaint {
 
     }
 
+
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
@@ -101,7 +104,7 @@ public class CanvasView extends SurfaceView implements IPaint {
             _paint.setColor(shape.color);
             canvas.drawPath(shape.path, _paint);
         }
-        _paint.setColor(isEraseMode() ? Color.BLACK : _color);
+        _paint.setColor(isEraseMode() ? Color.WHITE : _color);
         canvas.drawPath(_shape.path, _paint);
     }
 
@@ -123,7 +126,7 @@ public class CanvasView extends SurfaceView implements IPaint {
 
     private void touch_up() {
         _shape.path.lineTo(mX, mY);
-        _shape.color = isEraseMode() ? Color.BLACK : _color;
+        _shape.color = isEraseMode() ? Color.WHITE : _color;
         _shapes.add(_shape);
         _shape = new ShapeBO();
         _undoneShapes.clear();
@@ -199,4 +202,7 @@ public class CanvasView extends SurfaceView implements IPaint {
         return _eraseMode;
     }
 
+    public List<ShapeBO> getShapes() {
+        return _shapes;
+    }
 }

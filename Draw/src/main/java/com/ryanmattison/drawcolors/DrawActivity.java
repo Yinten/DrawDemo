@@ -20,6 +20,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -36,6 +39,7 @@ public class DrawActivity extends AppCompatActivity {
 
 
     private static final String TAG = "DrawActivity";
+
     private CanvasView _canvasView;
 
     @Override
@@ -66,6 +70,10 @@ public class DrawActivity extends AppCompatActivity {
                 @Override
                 public void onColorSelected(int color) {
                    _canvasView.setColor(color);
+                    if(_canvasView.isEraseMode())
+                    {
+                        _canvasView.toggleErase();
+                    }
                 }
 
             });
