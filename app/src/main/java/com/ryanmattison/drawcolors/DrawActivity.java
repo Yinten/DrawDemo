@@ -16,20 +16,31 @@
 
 package com.ryanmattison.drawcolors;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.ryanmattison.drawcolors.utils.ImageUtil;
+import com.ryanmattison.drawcolors.utils.ShareUtil;
+import com.ryanmattison.drawcolors.views.CanvasView;
+
 
 public class DrawActivity extends AppCompatActivity {
+
+
+    private static final String TAG = "DrawActivity";
+    private CanvasView _canvasView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
-
+        _canvasView = (CanvasView)findViewById(R.id.canvas);
         //Hide ActionBar title
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -48,33 +59,47 @@ public class DrawActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_color_picker) {
-            Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+            _canvasView.changeColor(Color.RED);
 
             return true;
-        }
-        else if(id == R.id.menu_erase_toggle)
-        {
-            Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.menu_erase_toggle) {
+            if (_canvasView.isEraseMode()) {
+
+                item.setIcon(R.drawable.ic_eraser_black_24dp);
+
+            }
+            else
+            {
+                item.setIcon(R.drawable.ic_brush_black_24dp);
+            }
+
+            _canvasView.toggleErase();
             return true;
         }
-        else if(id == R.id.menu_draw_toggle)
-        {
-            Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
-            return true;
-        }
+
         else if(id == R.id.menu_redo)
         {
-            Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+            _canvasView.redo();
             return true;
         }
         else if (id == R.id.menu_undo)
         {
-            Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+            _canvasView.undo();
             return true;
         }
         else if (id == R.id.menu_share)
         {
-            Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+            Bitmap bitmap = _canvasView.captureImage();
+            if(bitmap != null)
+            {
+                String savedBitmapFileLocation = ImageUtil.saveImage(this, bitmap);
+                Log.i(TAG, "Saved Bitmap Location: " + savedBitmapFileLocation);
+                ShareUtil.shareImage(this, savedBitmapFileLocation);
+            }
+            else
+            {
+                Toast.makeText(this, "Image issue", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 

@@ -18,13 +18,18 @@
 package com.ryanmattison.drawcolors.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.shapes.Shape;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+
+import java.util.ArrayList;
 
 /**
  * Created by Ryan on 6/17/2015.
@@ -34,24 +39,25 @@ import android.view.SurfaceView;
  *
  * First Demo is to free draw with touch.
  */
-public class CanvasView extends SurfaceView {
-    public static final int DEMO_COLOR = 0x77FFFFFF;
+public class CanvasView extends SurfaceView implements IPaint {
+    public static final int DEFAULT_COLOR = 0x77FFFFFF;
     private static final String TAG = "CanvasView";
-
 
     /* The Canvas View will hold its current paint color, pathing, and revision information.
     This will helpful in view reuse if needed for the future of this application. */
 
-    private Path _path;
+    ArrayList<ShapeBO> _shapes = new ArrayList<ShapeBO>();
+    ArrayList<ShapeBO> _undoneShapes = new ArrayList<ShapeBO>();
 
-    //Default Paint
+
+    private int _color = DEFAULT_COLOR;
+    ShapeBO _shape = new ShapeBO();
     private Paint _paint;
-
-
-
     private float mX, mY;
 
+
     private static final float TOUCH_TOLERANCE = 1;
+    private boolean _eraseMode = false;
 
 
     public CanvasView(Context context) {
@@ -74,11 +80,12 @@ public class CanvasView extends SurfaceView {
     private void init() {
 
         setWillNotDraw(false);
-        _path = new Path();
+        setDrawingCacheEnabled(true);
+
         _paint = new Paint(Paint.DITHER_FLAG);
         _paint.setAntiAlias(true);
         _paint.setDither(true);
-        _paint.setColor(DEMO_COLOR);
+        _paint.setColor(_color);
         _paint.setStyle(Paint.Style.STROKE);
         _paint.setStrokeJoin(Paint.Join.ROUND);
         _paint.setStrokeCap(Paint.Cap.ROUND);
@@ -90,27 +97,37 @@ public class CanvasView extends SurfaceView {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         Log.i(TAG, "Canvas Draw");
-        canvas.drawPath(_path, _paint);
+        for (ShapeBO shape : _shapes) {
+            _paint.setColor(shape.color);
+            canvas.drawPath(shape.path, _paint);
+        }
+        _paint.setColor(isEraseMode() ? Color.BLACK : _color);
+        canvas.drawPath(_shape.path, _paint);
     }
 
     private void touch_start(float x, float y)
     {
-        _path.moveTo(x, y);
+        _shape.path.moveTo(x, y);
         mX = x;
         mY = y;
     }
     private void touch_move(float x, float y) {
 
-            _path.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-            mX = x;
-            mY = y;
+        _shape.path.quadTo(mX, mY, (x + mX)/2, (y + mY) / 2);
+        mX = x;
+        mY = y;
 
 
     }
 
 
     private void touch_up() {
-        _path.lineTo(mX, mY);
+        _shape.path.lineTo(mX, mY);
+        _shape.color = isEraseMode() ? Color.BLACK : _color;
+        _shapes.add(_shape);
+        _shape = new ShapeBO();
+        _undoneShapes.clear();
+
     }
 
     @Override
@@ -139,6 +156,41 @@ public class CanvasView extends SurfaceView {
     }
 
 
+    @Override
+    public void undo() {
+        if(_shapes.size() - 1 >= 0) {
+            _undoneShapes.add(_shapes.remove(_shapes.size() - 1));
+            invalidate();
+        }
+    }
+
+    @Override
+    public void redo() {
+        if(_undoneShapes.size() - 1 >= 0) {
+            _shapes.add(_undoneShapes.remove(_undoneShapes.size() - 1));
+            invalidate();
+        }
+    }
+
+    @Override
+    public void toggleErase() {
+        _eraseMode = !_eraseMode;
+    }
+
+    @Override
+    public void changeColor(int color) {
+        _color = color;
+        _paint.setColor(color);
+    }
+
+    @Override
+    public Bitmap captureImage() {
+        this.buildDrawingCache();
+        return this.getDrawingCache();
+    }
 
 
+    public boolean isEraseMode() {
+        return _eraseMode;
+    }
 }
