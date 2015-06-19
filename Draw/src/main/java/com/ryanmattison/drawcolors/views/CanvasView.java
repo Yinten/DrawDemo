@@ -178,9 +178,14 @@ public class CanvasView extends SurfaceView implements IPaint {
     }
 
     @Override
-    public void changeColor(int color) {
+    public void setColor(int color) {
         _color = color;
         _paint.setColor(color);
+    }
+
+    @Override
+    public int getColor() {
+        return _color;
     }
 
     @Override
@@ -193,4 +198,5 @@ public class CanvasView extends SurfaceView implements IPaint {
     public boolean isEraseMode() {
         return _eraseMode;
     }
+
 }

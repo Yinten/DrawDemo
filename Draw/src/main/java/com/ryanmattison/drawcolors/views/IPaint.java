@@ -11,7 +11,8 @@ public interface IPaint {
     public void undo();
     public void redo();
     public void toggleErase();
-    public void changeColor(int color);
+    public void setColor(int color);
+    public int getColor();
     public Bitmap captureImage();
 
 }

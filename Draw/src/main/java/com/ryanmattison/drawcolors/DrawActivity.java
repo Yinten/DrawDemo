@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.chiralcode.colorpicker.ColorPickerDialog;
 import com.ryanmattison.drawcolors.utils.ImageUtil;
 import com.ryanmattison.drawcolors.utils.ShareUtil;
 import com.ryanmattison.drawcolors.views.CanvasView;
@@ -60,7 +61,15 @@ public class DrawActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_color_picker) {
-            _canvasView.changeColor(Color.RED);
+            ColorPickerDialog colorPickerDialog = new ColorPickerDialog(this, _canvasView.getColor(), new ColorPickerDialog.OnColorSelectedListener() {
+
+                @Override
+                public void onColorSelected(int color) {
+                   _canvasView.setColor(color);
+                }
+
+            });
+            colorPickerDialog.show();
 
             return true;
         } else if (id == R.id.menu_erase_toggle) {
